@@ -1,0 +1,40 @@
+version: "3.9"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+    environment:
+      NODE_ENV: production
+      DEV_PROOF_MODE: "false"
+      STORE_ID: store-outdoor
+      PORT: "3001"
+    ports:
+      - "3001:3001"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/ready"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  web:
+    build:
+      context: .
+      dockerfile: apps/web/Dockerfile
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: http://api:3001
+      PORT: "3000"
+    ports:
+      - "3000:3000"
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3000"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s

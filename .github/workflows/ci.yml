@@ -1,0 +1,48 @@
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve Node version
+        id: node
+        run: |
+          if [ -f .nvmrc ]; then
+            echo "node_version=$(cat .nvmrc)" >> "$GITHUB_OUTPUT"
+          else
+            echo "node_version=22" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ steps.node.outputs.node_version }}
+
+      - name: Enable corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm run typecheck
+
+      - name: Test
+        run: pnpm test
+
+      - name: Test invariants
+        run: pnpm run test:invariants
+
+      - name: Lint copy
+        run: pnpm run lint:copy
+
+      - name: Build
+        run: pnpm -r build

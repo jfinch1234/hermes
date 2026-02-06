@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "lib": ["ES2020", "DOM"],
+    "resolveJsonModule": true,
+    "baseUrl": ".",
+    "paths": {
+      "@hermes/domain": ["packages/domain/src"],
+      "@hermes/rules": ["packages/rules/src"],
+      "@hermes/seed": ["packages/seed/src"]
+    },
+    "strict": true,
+    "declaration": true,
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  }
+}

@@ -1,0 +1,12 @@
+[
+  {"id":"h1","storeId":"store-audio","name":"Quiet Loop","price":199,"currency":"USD","attributes":{"noiseControl":"active","battery":22,"weight":240}},
+  {"id":"h2","storeId":"store-audio","name":"Quiet Loop Lite","price":159,"currency":"USD","attributes":{"noiseControl":"passive","battery":30,"weight":210}},
+  {"id":"h3","storeId":"store-audio","name":"RoomTone","price":179,"currency":"USD","attributes":{"noiseControl":"active","battery":18,"weight":200}},
+  {"id":"h4","storeId":"store-audio","name":"RoomTone Max","price":229,"currency":"USD","attributes":{"noiseControl":"active","battery":28,"weight":260}},
+  {"id":"h5","storeId":"store-audio","name":"Studio Drift","price":149,"currency":"USD","attributes":{"noiseControl":"passive","battery":26,"weight":190}},
+  {"id":"h6","storeId":"store-audio","name":"Studio Drift Plus","price":189,"currency":"USD","attributes":{"noiseControl":"passive","battery":34,"weight":205}},
+  {"id":"h7","storeId":"store-audio","name":"Metro Calm","price":169,"currency":"USD","attributes":{"noiseControl":"active","battery":20,"weight":225}},
+  {"id":"h8","storeId":"store-audio","name":"Metro Calm Air","price":209,"currency":"USD","attributes":{"noiseControl":"active","battery":24,"weight":215}},
+  {"id":"h9","storeId":"store-audio","name":"Daily Focus","price":139,"currency":"USD","attributes":{"noiseControl":"passive","battery":32,"weight":180}},
+  {"id":"h10","storeId":"store-audio","name":"Daily Focus Air","price":179,"currency":"USD","attributes":{"noiseControl":"passive","battery":28,"weight":175}}
+]

@@ -1,0 +1,27 @@
+{
+  "name": "hermes",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "pnpm -r dev",
+    "dev:api": "pnpm --filter @hermes/api dev",
+    "dev:web": "pnpm --filter @hermes/web dev",
+    "build": "pnpm -r build",
+    "test": "pnpm -r test",
+    "lint": "pnpm -r lint",
+    "typecheck": "pnpm -r typecheck",
+    "test:invariants": "pnpm -r --filter @hermes/rules test:invariants",
+    "lint:copy": "node tools/lint-copy.mjs",
+    "test:abuse": "pnpm --filter @hermes/api test -- hermes.abuse.test.ts",
+    "launch:sim": "node tools/launch-sim.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1",
+    "tsx": "^4.19.1"
+  }
+}

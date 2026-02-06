@@ -1,0 +1,22 @@
+[
+  {"id":"b1","storeId":"store-outdoor","name":"Trail Bottle 500","price":28,"currency":"USD","attributes":{"capacity":500,"insulation":12,"material":"steel"}},
+  {"id":"b2","storeId":"store-outdoor","name":"Trail Bottle 750","price":32,"currency":"USD","attributes":{"capacity":750,"insulation":12,"material":"steel"}},
+  {"id":"b3","storeId":"store-outdoor","name":"Trail Bottle 1000","price":36,"currency":"USD","attributes":{"capacity":1000,"insulation":12,"material":"steel"}},
+  {"id":"b4","storeId":"store-outdoor","name":"Summit Bottle 500","price":30,"currency":"USD","attributes":{"capacity":500,"insulation":18,"material":"steel"}},
+  {"id":"b5","storeId":"store-outdoor","name":"Summit Bottle 750","price":34,"currency":"USD","attributes":{"capacity":750,"insulation":18,"material":"steel"}},
+  {"id":"b6","storeId":"store-outdoor","name":"Summit Bottle 1000","price":38,"currency":"USD","attributes":{"capacity":1000,"insulation":18,"material":"steel"}},
+  {"id":"b7","storeId":"store-outdoor","name":"Glide Bottle 500","price":29,"currency":"USD","attributes":{"capacity":500,"insulation":12,"material":"glass"}},
+  {"id":"b8","storeId":"store-outdoor","name":"Glide Bottle 750","price":33,"currency":"USD","attributes":{"capacity":750,"insulation":12,"material":"glass"}},
+  {"id":"b9","storeId":"store-outdoor","name":"Glide Bottle 1000","price":37,"currency":"USD","attributes":{"capacity":1000,"insulation":12,"material":"glass"}},
+  {"id":"b10","storeId":"store-outdoor","name":"Echo Bottle 500","price":31,"currency":"USD","attributes":{"capacity":500,"insulation":24,"material":"steel"}},
+  {"id":"b11","storeId":"store-outdoor","name":"Echo Bottle 750","price":35,"currency":"USD","attributes":{"capacity":750,"insulation":24,"material":"steel"}},
+  {"id":"b12","storeId":"store-outdoor","name":"Echo Bottle 1000","price":39,"currency":"USD","attributes":{"capacity":1000,"insulation":24,"material":"steel"}},
+  {"id":"b13","storeId":"store-outdoor","name":"Stream Bottle 500","price":26,"currency":"USD","attributes":{"capacity":500,"insulation":12,"material":"steel"}},
+  {"id":"b14","storeId":"store-outdoor","name":"Stream Bottle 750","price":30,"currency":"USD","attributes":{"capacity":750,"insulation":12,"material":"steel"}},
+  {"id":"b15","storeId":"store-outdoor","name":"Stream Bottle 1000","price":34,"currency":"USD","attributes":{"capacity":1000,"insulation":12,"material":"steel"}},
+  {"id":"b16","storeId":"store-outdoor","name":"Pace Bottle 500","price":27,"currency":"USD","attributes":{"capacity":500,"insulation":18,"material":"glass"}},
+  {"id":"b17","storeId":"store-outdoor","name":"Pace Bottle 750","price":31,"currency":"USD","attributes":{"capacity":750,"insulation":18,"material":"glass"}},
+  {"id":"b18","storeId":"store-outdoor","name":"Pace Bottle 1000","price":35,"currency":"USD","attributes":{"capacity":1000,"insulation":18,"material":"glass"}},
+  {"id":"b19","storeId":"store-outdoor","name":"Vault Bottle 500","price":33,"currency":"USD","attributes":{"capacity":500,"insulation":24,"material":"glass"}},
+  {"id":"b20","storeId":"store-outdoor","name":"Vault Bottle 750","price":37,"currency":"USD","attributes":{"capacity":750,"insulation":24,"material":"glass"}}
+]

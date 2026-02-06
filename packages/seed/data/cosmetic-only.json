@@ -1,0 +1,8 @@
+[
+  {"id":"n1","storeId":"store-stationery","name":"Soft Notebook","price":12,"currency":"USD","attributes":{"pages":80,"size":"A5","color":"red"}},
+  {"id":"n2","storeId":"store-stationery","name":"Soft Notebook","price":12,"currency":"USD","attributes":{"pages":80,"size":"A5","color":"blue"}},
+  {"id":"n3","storeId":"store-stationery","name":"Soft Notebook","price":12,"currency":"USD","attributes":{"pages":80,"size":"A5","color":"green"}},
+  {"id":"n4","storeId":"store-stationery","name":"Soft Notebook","price":12,"currency":"USD","attributes":{"pages":80,"size":"A5","color":"black"}},
+  {"id":"n5","storeId":"store-stationery","name":"Soft Notebook","price":12,"currency":"USD","attributes":{"pages":80,"size":"A5","color":"white"}},
+  {"id":"n6","storeId":"store-stationery","name":"Soft Notebook","price":12,"currency":"USD","attributes":{"pages":80,"size":"A5","color":"yellow"}}
+]
