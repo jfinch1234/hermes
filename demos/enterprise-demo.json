@@ -1,0 +1,676 @@
+{
+  "generatedAt": "2026-02-06T00:00:00Z",
+  "policyReport": {
+    "policy": {
+      "forbidRanking": true,
+      "forbidRecommendations": true,
+      "maxOptions": 3,
+      "singleStoreOnly": true,
+      "forbidPaidPlacement": true,
+      "forbidOutcomeOptimization": true,
+      "proofModeAllowedInProd": false
+    },
+    "enforcementPoints": [
+      "startup_policy_validation: apps/api/src/main.ts",
+      "response_option_cap: apps/api/src/hermes/hermes.service.ts",
+      "response_field_guard: apps/api/src/hermes/hermes.service.ts"
+    ],
+    "invariantTests": [
+      "packages/rules/src/hermes.invariants.test.ts",
+      "apps/api/src/hermes/hermes.policy.test.ts",
+      "apps/api/src/hermes/hermes.service.test.ts"
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "meaningful_variation",
+      "storeId": "store-outdoor",
+      "responses": [
+        {
+          "sessionId": "session-demo",
+          "storeId": "store-outdoor",
+          "mode": "EXPLORATORY",
+          "state": "CLARIFICATION",
+          "statusText": "We’re narrowing options so you get the right product.",
+          "clarification": {
+            "attributeKey": "capacity",
+            "question": "Which functional difference feels closer to what you want?",
+            "options": [
+              "1000",
+              "500",
+              "750"
+            ]
+          },
+          "auditTrailId": "session-demo"
+        },
+        {
+          "sessionId": "session-demo",
+          "storeId": "store-outdoor",
+          "mode": "EXPLORATORY",
+          "state": "HONESTY_RENDER",
+          "statusText": "We’re narrowing options so you get the right product.",
+          "candidates": [
+            {
+              "productId": "b3",
+              "name": "Trail Bottle 1000",
+              "price": 36,
+              "currency": "USD",
+              "whatsDifferent": "This is effectively the only version that matters here. Differences are minor in this set.",
+              "whyItMatters": "There are no meaningful differences between these options.",
+              "whoItsBetterFor": "Fits people who want a simple, consistent choice."
+            }
+          ],
+          "auditTrailId": "session-demo"
+        }
+      ],
+      "trace": [
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_to": "SEARCH_INTAKE",
+          "details": {
+            "reason": "session_created"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "SEARCH_INTAKE",
+          "state_to": "DISCOVERY_SCAN",
+          "details": {
+            "reason": "search_started"
+          }
+        },
+        {
+          "eventType": "DISCOVERY_SCAN",
+          "store_id": "store-outdoor",
+          "details": {
+            "normalized_query_hash": "7def9c79e5be6d7a",
+            "sample_count": 20
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "DISCOVERY_SCAN",
+          "state_to": "VARIATION_DETECTION",
+          "details": {
+            "reason": "variation_detected"
+          }
+        },
+        {
+          "eventType": "VARIATION_SEMANTICS",
+          "store_id": "store-outdoor",
+          "details": {
+            "attribute_keys": [
+              "capacity",
+              "insulation",
+              "material"
+            ]
+          }
+        },
+        {
+          "eventType": "CLARIFICATION_DERIVED",
+          "store_id": "store-outdoor",
+          "details": {
+            "attribute_key": "capacity"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "VARIATION_DETECTION",
+          "state_to": "CLARIFICATION",
+          "details": {
+            "reason": "clarification_needed"
+          }
+        },
+        {
+          "eventType": "CLARIFICATION_DERIVED",
+          "store_id": "store-outdoor",
+          "details": {
+            "attribute_key": "capacity"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "CLARIFICATION",
+          "state_to": "CANDIDATE_PRUNING",
+          "details": {
+            "reason": "candidate_pruning"
+          }
+        },
+        {
+          "eventType": "CANDIDATES_PRUNED",
+          "store_id": "store-outdoor",
+          "details": {
+            "candidate_ids": [
+              "b3"
+            ]
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "CANDIDATE_PRUNING",
+          "state_to": "HONESTY_RENDER",
+          "details": {
+            "reason": "render_honesty"
+          }
+        },
+        {
+          "eventType": "HONESTY_WINDOW_BUILT",
+          "store_id": "store-outdoor",
+          "details": {
+            "candidate_ids": [
+              "b3"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "cosmetic_only",
+      "storeId": "store-stationery",
+      "responses": [
+        {
+          "sessionId": "session-demo",
+          "storeId": "store-stationery",
+          "mode": "EXPLORATORY",
+          "state": "HONESTY_RENDER",
+          "statusText": "We’re narrowing options so you get the right product.",
+          "candidates": [
+            {
+              "productId": "n1",
+              "name": "Soft Notebook",
+              "price": 12,
+              "currency": "USD",
+              "whatsDifferent": "This is effectively the only version that matters here. Differences are minor in this set.",
+              "whyItMatters": "There are no meaningful differences between these options.",
+              "whoItsBetterFor": "Fits people who want a simple, consistent choice."
+            }
+          ],
+          "auditTrailId": "session-demo"
+        }
+      ],
+      "trace": [
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-stationery",
+          "state_to": "SEARCH_INTAKE",
+          "details": {
+            "reason": "session_created"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-stationery",
+          "state_from": "SEARCH_INTAKE",
+          "state_to": "DISCOVERY_SCAN",
+          "details": {
+            "reason": "search_started"
+          }
+        },
+        {
+          "eventType": "DISCOVERY_SCAN",
+          "store_id": "store-stationery",
+          "details": {
+            "normalized_query_hash": "b53bcf919f24746d",
+            "sample_count": 6
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-stationery",
+          "state_from": "DISCOVERY_SCAN",
+          "state_to": "VARIATION_DETECTION",
+          "details": {
+            "reason": "variation_detected"
+          }
+        },
+        {
+          "eventType": "VARIATION_SEMANTICS",
+          "store_id": "store-stationery",
+          "details": {
+            "attribute_keys": []
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-stationery",
+          "state_from": "VARIATION_DETECTION",
+          "state_to": "CANDIDATE_PRUNING",
+          "details": {
+            "reason": "no_variation"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-stationery",
+          "state_from": "CANDIDATE_PRUNING",
+          "state_to": "HONESTY_RENDER",
+          "details": {
+            "reason": "render_honesty"
+          }
+        }
+      ]
+    },
+    {
+      "id": "abuse_attempt",
+      "storeId": "store-outdoor",
+      "responses": [
+        {
+          "sessionId": "session-demo",
+          "storeId": "store-outdoor",
+          "mode": "EXPLORATORY",
+          "state": "CLARIFICATION",
+          "statusText": "We’re narrowing options so you get the right product.",
+          "clarification": {
+            "attributeKey": "capacity",
+            "question": "Which functional difference feels closer to what you want?",
+            "options": [
+              "1000",
+              "500",
+              "750"
+            ]
+          },
+          "auditTrailId": "session-demo"
+        }
+      ],
+      "trace": [
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_to": "SEARCH_INTAKE",
+          "details": {
+            "reason": "session_created"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "SEARCH_INTAKE",
+          "state_to": "DISCOVERY_SCAN",
+          "details": {
+            "reason": "search_started"
+          }
+        },
+        {
+          "eventType": "DISCOVERY_SCAN",
+          "store_id": "store-outdoor",
+          "details": {
+            "normalized_query_hash": "e3b0c44298fc1c14",
+            "sample_count": 20
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "DISCOVERY_SCAN",
+          "state_to": "VARIATION_DETECTION",
+          "details": {
+            "reason": "variation_detected"
+          }
+        },
+        {
+          "eventType": "VARIATION_SEMANTICS",
+          "store_id": "store-outdoor",
+          "details": {
+            "attribute_keys": [
+              "capacity",
+              "insulation",
+              "material"
+            ]
+          }
+        },
+        {
+          "eventType": "CLARIFICATION_DERIVED",
+          "store_id": "store-outdoor",
+          "details": {
+            "attribute_key": "capacity"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-outdoor",
+          "state_from": "VARIATION_DETECTION",
+          "state_to": "CLARIFICATION",
+          "details": {
+            "reason": "clarification_needed"
+          }
+        }
+      ]
+    },
+    {
+      "id": "expectation_repair",
+      "storeId": "store-audio",
+      "responses": [
+        {
+          "sessionId": "session-demo",
+          "storeId": "store-audio",
+          "mode": "EXPLORATORY",
+          "state": "HONESTY_RENDER",
+          "statusText": "We’re narrowing options so you get the right product.",
+          "candidates": [],
+          "auditTrailId": "session-demo"
+        }
+      ],
+      "trace": [
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_to": "SEARCH_INTAKE",
+          "details": {
+            "reason": "session_created"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "SEARCH_INTAKE",
+          "state_to": "DISCOVERY_SCAN",
+          "details": {
+            "reason": "search_started"
+          }
+        },
+        {
+          "eventType": "DISCOVERY_SCAN",
+          "store_id": "store-audio",
+          "details": {
+            "normalized_query_hash": "86d6e84ef9a21b74",
+            "sample_count": 0
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "DISCOVERY_SCAN",
+          "state_to": "VARIATION_DETECTION",
+          "details": {
+            "reason": "variation_detected"
+          }
+        },
+        {
+          "eventType": "VARIATION_SEMANTICS",
+          "store_id": "store-audio",
+          "details": {
+            "attribute_keys": []
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "VARIATION_DETECTION",
+          "state_to": "CANDIDATE_PRUNING",
+          "details": {
+            "reason": "no_variation"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "CANDIDATE_PRUNING",
+          "state_to": "HONESTY_RENDER",
+          "details": {
+            "reason": "render_honesty"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "HONESTY_RENDER",
+          "state_to": "EXPECTATION_REPAIR",
+          "details": {
+            "reason": "expectation_repair"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "EXPECTATION_REPAIR",
+          "state_to": "SEARCH_INTAKE",
+          "details": {
+            "reason": "repair_reset"
+          }
+        },
+        {
+          "eventType": "REPAIR_CLASSIFIED",
+          "store_id": "store-audio",
+          "details": {
+            "intent": "TOO_BROAD",
+            "note_hash": "92fe1bdc1c570450"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "SEARCH_INTAKE",
+          "state_to": "DISCOVERY_SCAN",
+          "details": {
+            "reason": "repair_scan:TOO_BROAD:resample"
+          }
+        },
+        {
+          "eventType": "REPAIR_APPLIED",
+          "store_id": "store-audio",
+          "details": {
+            "intent": "TOO_BROAD",
+            "action": "resample",
+            "normalized_query_hash": "86d6e84ef9a21b74"
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "DISCOVERY_SCAN",
+          "state_to": "VARIATION_DETECTION",
+          "details": {
+            "reason": "repair_variation:TOO_BROAD"
+          }
+        },
+        {
+          "eventType": "VARIATION_SEMANTICS",
+          "store_id": "store-audio",
+          "details": {
+            "attribute_keys": []
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "VARIATION_DETECTION",
+          "state_to": "CANDIDATE_PRUNING",
+          "details": {
+            "reason": "repair_pruning:TOO_BROAD"
+          }
+        },
+        {
+          "eventType": "CANDIDATES_PRUNED",
+          "store_id": "store-audio",
+          "details": {
+            "candidate_ids": []
+          }
+        },
+        {
+          "eventType": "STATE_TRANSITION",
+          "store_id": "store-audio",
+          "state_from": "CANDIDATE_PRUNING",
+          "state_to": "HONESTY_RENDER",
+          "details": {
+            "reason": "repair_honesty:TOO_BROAD"
+          }
+        },
+        {
+          "eventType": "HONESTY_WINDOW_BUILT",
+          "store_id": "store-audio",
+          "details": {
+            "candidate_ids": []
+          }
+        }
+      ]
+    }
+  ],
+  "finalResponse": {
+    "sessionId": "session-demo",
+    "storeId": "store-audio",
+    "mode": "EXPLORATORY",
+    "state": "HONESTY_RENDER",
+    "statusText": "We’re narrowing options so you get the right product.",
+    "candidates": [],
+    "auditTrailId": "session-demo"
+  },
+  "decisionTrace": [
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_to": "SEARCH_INTAKE",
+      "details": {
+        "reason": "session_created"
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "SEARCH_INTAKE",
+      "state_to": "DISCOVERY_SCAN",
+      "details": {
+        "reason": "search_started"
+      }
+    },
+    {
+      "eventType": "DISCOVERY_SCAN",
+      "store_id": "store-audio",
+      "details": {
+        "normalized_query_hash": "86d6e84ef9a21b74",
+        "sample_count": 0
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "DISCOVERY_SCAN",
+      "state_to": "VARIATION_DETECTION",
+      "details": {
+        "reason": "variation_detected"
+      }
+    },
+    {
+      "eventType": "VARIATION_SEMANTICS",
+      "store_id": "store-audio",
+      "details": {
+        "attribute_keys": []
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "VARIATION_DETECTION",
+      "state_to": "CANDIDATE_PRUNING",
+      "details": {
+        "reason": "no_variation"
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "CANDIDATE_PRUNING",
+      "state_to": "HONESTY_RENDER",
+      "details": {
+        "reason": "render_honesty"
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "HONESTY_RENDER",
+      "state_to": "EXPECTATION_REPAIR",
+      "details": {
+        "reason": "expectation_repair"
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "EXPECTATION_REPAIR",
+      "state_to": "SEARCH_INTAKE",
+      "details": {
+        "reason": "repair_reset"
+      }
+    },
+    {
+      "eventType": "REPAIR_CLASSIFIED",
+      "store_id": "store-audio",
+      "details": {
+        "intent": "TOO_BROAD",
+        "note_hash": "92fe1bdc1c570450"
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "SEARCH_INTAKE",
+      "state_to": "DISCOVERY_SCAN",
+      "details": {
+        "reason": "repair_scan:TOO_BROAD:resample"
+      }
+    },
+    {
+      "eventType": "REPAIR_APPLIED",
+      "store_id": "store-audio",
+      "details": {
+        "intent": "TOO_BROAD",
+        "action": "resample",
+        "normalized_query_hash": "86d6e84ef9a21b74"
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "DISCOVERY_SCAN",
+      "state_to": "VARIATION_DETECTION",
+      "details": {
+        "reason": "repair_variation:TOO_BROAD"
+      }
+    },
+    {
+      "eventType": "VARIATION_SEMANTICS",
+      "store_id": "store-audio",
+      "details": {
+        "attribute_keys": []
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "VARIATION_DETECTION",
+      "state_to": "CANDIDATE_PRUNING",
+      "details": {
+        "reason": "repair_pruning:TOO_BROAD"
+      }
+    },
+    {
+      "eventType": "CANDIDATES_PRUNED",
+      "store_id": "store-audio",
+      "details": {
+        "candidate_ids": []
+      }
+    },
+    {
+      "eventType": "STATE_TRANSITION",
+      "store_id": "store-audio",
+      "state_from": "CANDIDATE_PRUNING",
+      "state_to": "HONESTY_RENDER",
+      "details": {
+        "reason": "repair_honesty:TOO_BROAD"
+      }
+    },
+    {
+      "eventType": "HONESTY_WINDOW_BUILT",
+      "store_id": "store-audio",
+      "details": {
+        "candidate_ids": []
+      }
+    }
+  ]
+}
