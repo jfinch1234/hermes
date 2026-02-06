@@ -1,6 +1,7 @@
 import "reflect-metadata";
 import { NestFactory } from "@nestjs/core";
 import { AppModule } from "./app.module";
+import { validateEnterprisePolicyOnStartup } from "./hermes/policy-validation";
 
 function requireEnv(name: string): string {
   const value = process.env[name];
@@ -25,6 +26,7 @@ function validateConfig(): void {
 }
 
 async function bootstrap() {
+  validateEnterprisePolicyOnStartup();
   validateConfig();
   const app = await NestFactory.create(AppModule, { cors: true });
   const port = process.env.PORT ? Number(process.env.PORT) : 3001;

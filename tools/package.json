@@ -1,0 +1,16 @@
+{
+  "name": "@hermes/tools",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "vitest run -c vitest.config.ts",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "echo \"no lint\""
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.5",
+    "typescript": "^5.5.4",
+    "vitest": "^2.1.1",
+    "tsx": "^4.19.1"
+  }
+}

@@ -17,7 +17,9 @@
     "test:invariants": "pnpm -r --filter @hermes/rules test:invariants",
     "lint:copy": "node tools/lint-copy.mjs",
     "test:abuse": "pnpm --filter @hermes/api test -- hermes.abuse.test.ts",
-    "launch:sim": "node tools/launch-sim.mjs"
+    "launch:sim": "node tools/launch-sim.mjs",
+    "enterprise:policy": "node tools/generate-policy-appendix.mjs",
+    "enterprise:demo": "node tools/enterprise-demo.mjs"
   },
   "devDependencies": {
     "typescript": "^5.5.4",

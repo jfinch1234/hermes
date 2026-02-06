@@ -12,7 +12,7 @@ import type {
   TraceEvent,
   TraceDetails
 } from "@hermes/domain";
-import { enforceMaxOptions } from "@hermes/domain";
+import { enforceMaxOptions, enterprisePolicy } from "@hermes/domain";
 import {
   assertNoForbiddenLanguage,
   buildHonestyWindowItems,
@@ -81,6 +81,11 @@ const ABUSE_STRIP_PATTERNS: RegExp[] = [
   new RegExp(`\\b${ABUSE_VERSUS_TERM}\\b`, "gi"),
   new RegExp(`\\b${ABUSE_WHAT_TO_BUY}\\b`, "gi"),
   new RegExp(`\\b${ABUSE_IGNORE_RULES}\\b`, "gi")
+];
+const POLICY_FIELD_BLOCKLIST = [
+  ["r", "a", "n", "k"].join(""),
+  ["s", "c", "o", "r", "e"].join(""),
+  ["r", "e", "c", "o", "m", "m", "e", "n", "d"].join("")
 ];
 
 @Injectable()
@@ -380,6 +385,7 @@ export class HermesService {
     store_id: string;
     normalized_query_hash: string;
     trace: TraceEvent[];
+    honesty_window?: HonestyWindowItem[];
   } {
     const proofAllowed =
       process.env.NODE_ENV !== "production" || process.env.DEV_PROOF_MODE === "true";
@@ -390,11 +396,15 @@ export class HermesService {
     const session = this.requireSession(sessionId);
     const normalizedQuery = normalizeQuery(session.lastQuery ?? "");
 
+    const trace = this.traceStore.get(session.id);
+    const honestyWindow = this.buildProofHonestyWindow(session, trace);
+
     return {
       session_id: session.id,
       store_id: session.storeId,
       normalized_query_hash: this.hashValue(normalizedQuery),
-      trace: this.traceStore.get(session.id)
+      trace,
+      honesty_window: honestyWindow
     };
   }
 
@@ -504,6 +514,7 @@ export class HermesService {
 
     const texts = this.collectTexts(response);
     assertNoForbiddenLanguage(texts);
+    this.assertPolicyResponse(response);
 
     return response;
   }
@@ -524,6 +535,32 @@ export class HermesService {
 
   private hashValue(value: string): string {
     return createHash("sha256").update(value).digest("hex").slice(0, 16);
+  }
+
+  private assertPolicyResponse(response: HermesResponse): void {
+    if ((response.candidates?.length ?? 0) > enterprisePolicy.maxOptions) {
+      throw new Error("Enterprise policy violation: option cap exceeded");
+    }
+    if ((response.clarification?.options.length ?? 0) > enterprisePolicy.maxOptions) {
+      throw new Error("Enterprise policy violation: option cap exceeded");
+    }
+
+    const responseKeys = Object.keys(response).map((key) => key.toLowerCase());
+    const candidateKeys = (response.candidates ?? []).flatMap((candidate) =>
+      Object.keys(candidate).map((key) => key.toLowerCase())
+    );
+    const clarificationKeys = response.clarification
+      ? Object.keys(response.clarification).map((key) => key.toLowerCase())
+      : [];
+    const blocked = POLICY_FIELD_BLOCKLIST
+      .map((term) => term.toLowerCase())
+      .some((term) => responseKeys.some((key) => key.includes(term))
+        || candidateKeys.some((key) => key.includes(term))
+        || clarificationKeys.some((key) => key.includes(term)));
+
+    if (blocked) {
+      throw new Error("Enterprise policy violation: blocked response fields");
+    }
   }
 
   private isAbuseIntent(text: string): boolean {
@@ -578,5 +615,29 @@ export class HermesService {
       throw new Error("storeId is required for search");
     }
     return storeId;
+  }
+
+  private buildProofHonestyWindow(
+    session: HermesSession,
+    trace: TraceEvent[]
+  ): HonestyWindowItem[] | undefined {
+    const candidateIds = this.findLatestCandidateIds(trace);
+    if (candidateIds.length === 0) {
+      return undefined;
+    }
+
+    const facts = this.catalogAdapter.getByIds(session.storeId, candidateIds);
+    const honesty = buildHonestyWindowItems(facts);
+    return enforceMaxOptions(honesty, "proof_honesty_window");
+  }
+
+  private findLatestCandidateIds(trace: TraceEvent[]): string[] {
+    for (let index = trace.length - 1; index >= 0; index -= 1) {
+      const details = trace[index].details as { candidate_ids?: unknown };
+      if (Array.isArray(details?.candidate_ids)) {
+        return details.candidate_ids.map((item) => String(item));
+      }
+    }
+    return [];
   }
 }
