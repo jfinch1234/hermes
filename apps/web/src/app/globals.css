@@ -62,6 +62,14 @@ h1 {
   gap: 24px;
 }
 
+.hermes-theme-root {
+  background: var(--hermes-bg, #ffffff);
+  color: var(--hermes-text, #1f1f1f);
+  font-family: var(--hermes-font-family, var(--font-body));
+  font-size: var(--hermes-base-font-size, 14px);
+  min-height: 100vh;
+}
+
 @media (min-width: 960px) {
   .grid {
     grid-template-columns: 1fr 1.1fr;

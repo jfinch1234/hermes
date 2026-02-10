@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import type { HermesResponse, HonestyWindowItem } from "@hermes/domain";
 import { validateClientLanguage } from "../../lib/guardrails";
 import { createSession, runClarify, runRepair, runSearch } from "../../lib/api";
+import { parseThemeFromSearchParams } from "../../lib/theme";
 
 const STORE_ID = "store-outdoor";
 const MAX_OPTIONS = 3;
@@ -13,11 +15,35 @@ function formatPrice(item: HonestyWindowItem) {
 }
 
 export default function EmbedExamplePage() {
+  const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
   const [response, setResponse] = useState<HermesResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+
+  const { theme } = useMemo(
+    () => parseThemeFromSearchParams(searchParams),
+    [searchParams]
+  );
+  const resolvedFontFamily =
+    theme.fontFamily === "system"
+      ? "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif"
+      : theme.fontFamily;
+  const themeStyle = useMemo(
+    () =>
+      ({
+        "--hermes-font-family": resolvedFontFamily,
+        "--hermes-bg": theme.bg,
+        "--hermes-surface": theme.surface,
+        "--hermes-border": theme.border,
+        "--hermes-text": theme.text,
+        "--hermes-muted-text": theme.mutedText,
+        "--hermes-radius": `${theme.radiusPx}px`,
+        "--hermes-base-font-size": `${theme.baseFontSizePx}px`
+      }) as React.CSSProperties,
+    [resolvedFontFamily, theme]
+  );
 
   const statusLine = useMemo(() => {
     if (isLoading) {
@@ -96,7 +122,8 @@ export default function EmbedExamplePage() {
   };
 
   return (
-    <main className="embed-root">
+    <div className="hermes-theme-root" style={themeStyle}>
+      <main className="embed-root">
       <section className="embed-panel">
         <h1 className="embed-title">Embed Example</h1>
         <div className="embed-status" data-testid="status-line">
@@ -224,14 +251,16 @@ export default function EmbedExamplePage() {
           padding: 40px 20px 64px;
           display: grid;
           gap: 20px;
-          color: #1f1f1f;
+          color: var(--hermes-text);
+          font-family: var(--hermes-font-family);
+          font-size: var(--hermes-base-font-size);
         }
 
         .embed-panel {
-          border: 1px solid #d8d8d8;
-          border-radius: 12px;
+          border: 1px solid var(--hermes-border);
+          border-radius: var(--hermes-radius);
           padding: 20px;
-          background: #f8f8f8;
+          background: var(--hermes-surface);
         }
 
         .embed-title {
@@ -242,10 +271,11 @@ export default function EmbedExamplePage() {
 
         .embed-status {
           font-size: 0.95rem;
-          color: #3d3d3d;
+          color: var(--hermes-muted-text);
           padding: 8px 12px;
-          background: #efefef;
-          border-radius: 8px;
+          background: var(--hermes-bg);
+          border-radius: calc(var(--hermes-radius) - 2px);
+          border: 1px solid var(--hermes-border);
         }
 
         .embed-input-row {
@@ -256,18 +286,19 @@ export default function EmbedExamplePage() {
 
         .embed-input-row input {
           padding: 10px 12px;
-          border-radius: 8px;
-          border: 1px solid #c9c9c9;
+          border-radius: calc(var(--hermes-radius) - 2px);
+          border: 1px solid var(--hermes-border);
           font-size: 1rem;
-          background: #ffffff;
+          background: var(--hermes-bg);
+          color: var(--hermes-text);
         }
 
         .embed-button {
-          border: 1px solid #b8b8b8;
-          border-radius: 8px;
+          border: 1px solid var(--hermes-border);
+          border-radius: calc(var(--hermes-radius) - 2px);
           padding: 10px 14px;
-          background: #e4e4e4;
-          color: #1f1f1f;
+          background: var(--hermes-surface);
+          color: var(--hermes-text);
           font-size: 0.95rem;
           font-weight: 500;
           cursor: pointer;
@@ -278,7 +309,6 @@ export default function EmbedExamplePage() {
         .embed-button:hover {
           transform: none;
           box-shadow: none;
-          background: #dedede;
         }
 
         .embed-button:disabled {
@@ -287,14 +317,14 @@ export default function EmbedExamplePage() {
         }
 
         .embed-secondary {
-          background: #f1f1f1;
+          background: var(--hermes-bg);
         }
 
         .embed-label {
           text-transform: uppercase;
           letter-spacing: 0.08em;
           font-size: 0.75rem;
-          color: #4a4a4a;
+          color: var(--hermes-muted-text);
           margin-bottom: 8px;
         }
 
@@ -309,11 +339,11 @@ export default function EmbedExamplePage() {
         }
 
         .embed-chip {
-          border: 1px solid #c9c9c9;
+          border: 1px solid var(--hermes-border);
           border-radius: 999px;
           padding: 6px 12px;
-          background: #f0f0f0;
-          color: #1f1f1f;
+          background: var(--hermes-bg);
+          color: var(--hermes-text);
           font-size: 0.9rem;
           cursor: pointer;
           transition: none;
@@ -322,7 +352,6 @@ export default function EmbedExamplePage() {
         .embed-chip:hover {
           transform: none;
           box-shadow: none;
-          background: #e6e6e6;
         }
 
         .embed-grid {
@@ -332,10 +361,10 @@ export default function EmbedExamplePage() {
         }
 
         .embed-option {
-          border: 1px solid #d0d0d0;
-          border-radius: 10px;
+          border: 1px solid var(--hermes-border);
+          border-radius: calc(var(--hermes-radius) - 2px);
           padding: 12px;
-          background: #ffffff;
+          background: var(--hermes-bg);
         }
 
         .embed-option-title {
@@ -344,7 +373,7 @@ export default function EmbedExamplePage() {
         }
 
         .embed-option-meta {
-          color: #4a4a4a;
+          color: var(--hermes-muted-text);
           font-size: 0.9rem;
         }
 
@@ -354,10 +383,10 @@ export default function EmbedExamplePage() {
         }
 
         .embed-honesty {
-          border: 1px solid #d0d0d0;
-          border-radius: 10px;
+          border: 1px solid var(--hermes-border);
+          border-radius: calc(var(--hermes-radius) - 2px);
           padding: 12px;
-          background: #ffffff;
+          background: var(--hermes-bg);
         }
 
         .embed-honesty-section {
@@ -368,22 +397,22 @@ export default function EmbedExamplePage() {
           font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
             "Liberation Mono", "Courier New", monospace;
           font-size: 0.8rem;
-          color: #4a4a4a;
+          color: var(--hermes-muted-text);
           margin-bottom: 4px;
         }
 
         .embed-muted {
-          color: #5c5c5c;
+          color: var(--hermes-muted-text);
           font-size: 0.9rem;
         }
 
         .embed-error {
           margin-top: 12px;
-          color: #7a1d1d;
-          background: #f2dede;
+          color: var(--hermes-text);
+          background: var(--hermes-bg);
           padding: 8px 12px;
-          border-radius: 8px;
-          border: 1px solid #e0b4b4;
+          border-radius: calc(var(--hermes-radius) - 2px);
+          border: 1px solid var(--hermes-border);
         }
 
         @media (min-width: 720px) {
@@ -393,6 +422,7 @@ export default function EmbedExamplePage() {
           }
         }
       `}</style>
-    </main>
+      </main>
+    </div>
   );
 }

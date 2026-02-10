@@ -9,3 +9,4 @@ export * from "./expectationRepair";
 export * from "./decisionTrace";
 export * from "./enterprisePolicy";
 export * from "./policyReport";
+export * from "./themeTokens";

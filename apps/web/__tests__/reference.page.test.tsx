@@ -5,6 +5,12 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { HermesResponse } from "@hermes/domain";
 import { forbiddenLanguage } from "@hermes/rules";
 
+let mockSearchParams = new URLSearchParams();
+
+vi.mock("next/navigation", () => ({
+  useSearchParams: () => mockSearchParams
+}));
+
 vi.mock("../src/lib/api", () => ({
   createSession: vi.fn(),
   runSearch: vi.fn(),
@@ -58,6 +64,7 @@ function collectText(
 describe("reference page", () => {
   beforeEach(() => {
     vi.resetModules();
+    mockSearchParams = new URLSearchParams();
   });
 
   it("caps options and always renders honesty window", async () => {
@@ -182,5 +189,51 @@ describe("reference page", () => {
 
     const text = collectText(renderer.toJSON());
     expect(text).toContain("Repaired Option");
+  });
+
+  it("ignores saturated theme params without changing behavior", async () => {
+    mockSearchParams = new URLSearchParams("bg=%23ff0000");
+    const api = await import("../src/lib/api");
+    vi.mocked(api.createSession).mockResolvedValue(baseSession);
+    vi.mocked(api.runSearch).mockResolvedValue({
+      ...baseSession,
+      candidates: [1, 2, 3, 4].map(makeCandidate)
+    });
+
+    const { default: ReferencePage } = await import(
+      "../src/app/reference/page"
+    );
+
+    const renderer = create(<ReferencePage />);
+
+    const input = renderer.root.findByType("input");
+    const searchButton = renderer.root.findByProps({
+      "data-testid": "search-button"
+    });
+
+    await act(async () => {
+      input.props.onChange({ target: { value: "backpack" } });
+    });
+
+    await act(async () => {
+      await searchButton.props.onClick();
+    });
+
+    const options = renderer.root.findAllByProps({
+      "data-testid": "reference-option"
+    });
+    expect(options).toHaveLength(3);
+
+    const honestyWindow = renderer.root.findAllByProps({
+      "data-testid": "honesty-window"
+    });
+    expect(honestyWindow).toHaveLength(1);
+
+    const text = collectText(renderer.toJSON());
+    const lowerText = text.toLowerCase();
+
+    forbiddenLanguage.forEach((term: string) => {
+      expect(lowerText).not.toContain(term);
+    });
   });
 });
