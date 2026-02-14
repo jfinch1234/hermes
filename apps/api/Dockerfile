@@ -2,26 +2,30 @@ FROM node:22-alpine AS base
 WORKDIR /app
 RUN corepack enable
 
-FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY apps/api/package.json apps/api/
-COPY apps/web/package.json apps/web/
-COPY packages/domain/package.json packages/domain/
-COPY packages/rules/package.json packages/rules/
-COPY packages/seed/package.json packages/seed/
-RUN pnpm install --frozen-lockfile
-
-FROM deps AS build
+FROM base AS build
 COPY . .
-RUN pnpm --filter @hermes/api build
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @hermes/api... build
+RUN for pkg in domain rules seed; do \
+	if [ -d "dist/packages/$pkg/src" ]; then \
+		mkdir -p "packages/$pkg/dist"; \
+		cp -R "dist/packages/$pkg/src/." "packages/$pkg/dist/"; \
+	fi; \
+done
+RUN pnpm --filter @hermes/api --prod deploy /out/api
 
 FROM base AS runtime
 ENV NODE_ENV=production
 WORKDIR /app
-COPY --from=build /app/apps/api/dist apps/api/dist
-COPY --from=build /app/apps/api/package.json apps/api/package.json
-COPY --from=build /app/node_modules node_modules
-COPY --from=build /app/packages packages
-COPY --from=build /app/pnpm-lock.yaml pnpm-lock.yaml
+COPY --from=build /out/api ./
+RUN for pkg in domain rules seed; do \
+	if [ -d "/app/dist/packages/$pkg/src" ]; then \
+		target="$(find /app -type d -path "*/node_modules/@hermes/$pkg" | head -n1)"; \
+		if [ -n "$target" ]; then \
+			mkdir -p "$target/dist"; \
+			cp -R "/app/dist/packages/$pkg/src/." "$target/dist/"; \
+		fi; \
+	fi; \
+done
 EXPOSE 3001
-CMD ["node", "apps/api/dist/main.js"]
+CMD ["node", "dist/apps/api/src/main.js"]

@@ -2,27 +2,21 @@ FROM node:22-alpine AS base
 WORKDIR /app
 RUN corepack enable
 
-FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY apps/api/package.json apps/api/
-COPY apps/web/package.json apps/web/
-COPY packages/domain/package.json packages/domain/
-COPY packages/rules/package.json packages/rules/
-COPY packages/seed/package.json packages/seed/
-RUN pnpm install --frozen-lockfile
-
-FROM deps AS build
+FROM base AS build
 COPY . .
-RUN pnpm --filter @hermes/web build
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @hermes/web... build
+RUN for pkg in domain rules seed; do \
+	if [ -d "dist/packages/$pkg/src" ]; then \
+		mkdir -p "packages/$pkg/dist"; \
+		cp -R "dist/packages/$pkg/src/." "packages/$pkg/dist/"; \
+	fi; \
+done
+RUN pnpm --filter @hermes/web --prod deploy /out/web
 
 FROM base AS runtime
 ENV NODE_ENV=production
-WORKDIR /app/apps/web
-COPY --from=build /app/apps/web/.next ./.next
-COPY --from=build /app/apps/web/package.json ./package.json
-COPY --from=build /app/apps/web/next.config.mjs ./next.config.mjs
-COPY --from=build /app/node_modules /app/node_modules
-COPY --from=build /app/packages /app/packages
-COPY --from=build /app/pnpm-lock.yaml /app/pnpm-lock.yaml
+WORKDIR /app
+COPY --from=build /out/web ./
 EXPOSE 3000
-CMD ["node", "/app/node_modules/next/dist/bin/next", "start", "-p", "3000"]
+CMD ["sh", "-c", "node node_modules/next/dist/bin/next start -p ${PORT:-3000}"]
