@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { Suspense, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import type { HermesResponse, HonestyWindowItem } from "@hermes/domain";
 import { validateClientLanguage } from "../../lib/guardrails";
@@ -14,7 +14,7 @@ function formatPrice(item: HonestyWindowItem) {
   return `${item.currency} ${item.price}`;
 }
 
-export default function EmbedExamplePage() {
+function EmbedExamplePageContent() {
   const searchParams = useSearchParams();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [query, setQuery] = useState("");
@@ -424,5 +424,13 @@ export default function EmbedExamplePage() {
       `}</style>
       </main>
     </div>
+  );
+}
+
+export default function EmbedExamplePage() {
+  return (
+    <Suspense fallback={<main className="embed-root" />}>
+      <EmbedExamplePageContent />
+    </Suspense>
   );
 }

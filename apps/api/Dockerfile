@@ -14,7 +14,6 @@ RUN pnpm install --frozen-lockfile
 FROM deps AS build
 COPY . .
 RUN pnpm --filter @hermes/api build
-RUN pnpm prune --prod --filter @hermes/api...
 
 FROM base AS runtime
 ENV NODE_ENV=production
